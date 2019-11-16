@@ -1,62 +1,72 @@
-// Write your app here! (HINT: First thing should be a call to ReactDOM.render()... )
+// state = {
+//   color: "#0000ff"
+// };
 
-// const generateRandomColor = () => {
-//   let randomColor = []
-//   for (let index = 0; index < 5; index++) {
-//     randomColor[index] = ("#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16)})).toUpperCase()
-//   }
-//   console.log(randomColor)
-//   return randomColor
+// randomizeColors() {
+//   this.setState({ color: this._randomColor() });
 // }
 
-class ColorBox extends React.Component {
+// Write your app here! (HINT: First thing should be a call to ReactDOM.render()... )
+function ColorBox(props, idx, _allBoxes) {
+  const style = {
+    border: "2px solid black",
+    backgroundColor: props.color,
+    width: "100px",
+    height: "200px"
+  };
 
+  // const clickHandler = () => this.randomizeColors();
+
+  return (
+    <div key={idx} style={style}>
+      <p>{props.color}</p>
+    </div>
+  );
+}
+
+class App extends React.Component {
   state = {
-    color: "blue"
+    boxes: [
+      this._newBox(),
+      this._newBox(),
+      this._newBox()
+    ]
+  };
+
+  _randomColor() {
+    return "#" + ((Math.random() * 0xffffff) << 0).toString(16);
+  }
+  randomize() {
+    const currentBoxes = this.state.boxes;
+    const newBoxes = currentBoxes.map((box) => {return { color: this._randomColor() }})
+    const newState = {boxes: newBoxes}
+    this.setState(newState);
   }
 
-  generateRandomColor = () => {
-    let randomColor = ("#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16)})).toUpperCase()
-    console.log(randomColor)
-    this.setState({
-      color: randomColor
-    })
+  _newBox() {
+    return {color: this._randomColor()}
   }
+  addBox() {
+    const newBoxes = [...this.state.boxes, this._newBox()]
+    this.setState({boxes: newBoxes})
+  }
+
 
   render() {
     return (
-      <div style={{ backgroundColor: this.state.color }} className="w-100 d-flex flex-column align-items-center justify-content-center">
-        <h1>{this.state.color}</h1>
-        <button className="btn btn-dark">UNLOCK</button>
+      <div>
+        <div className="container">
+          <div className="text-center ">
+            <button onClick={ () => this.randomize() }>Randomize!</button>
+            <button onClick={ () => this.addBox() }>Add Box!</button>
+            <div className="d-flex justify-content-center">
+              {this.state.boxes.map(ColorBox)}
+            </div>
+          </div>
+        </div>
       </div>
-    )
+    );
   }
 }
 
-const RandomButtonEl = () => {
-  let newColor = ColorBox.generateRandomColor
-  console.log(newColor)
-  return (
-      <div className="text-center bg-dark fixed-top">
-        <button className="btn btn-secondary m-1">RANDOMIZE COLORS</button>  
-      </div>
-  )
-}
-
-const App = function() {
-
-  return (
-    <div>
-      <RandomButtonEl/>
-      <div className="w-100 d-flex" style={{ height: "100vh" }}>
-        <ColorBox />
-        <ColorBox />
-        <ColorBox />
-        <ColorBox />
-        <ColorBox />
-      </div>
-    </div>
-  )
-}
-
-ReactDOM.render(<App/>, document.getElementById('root'))
+ReactDOM.render(<App />, document.getElementById("root"));
