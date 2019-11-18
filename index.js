@@ -67,19 +67,20 @@ class App extends React.Component {
       box.toggleLock = () => this.toggleLock(index)
       return box
     })
-    const boxContainerStyle = {
+    const fullScreenContainer = {
       minHeight: "calc(100vh - 46px)"
     }
+    console.log(fullScreenContainer)
     if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/webOS/i) || navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPod/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/Windows Phone/i)) {
-      boxContainerStyle.minHeight = window.innerHeight + "px"
-      console.log(boxContainerStyle.minHeight)
+      fullScreenContainer.minHeight = window.innerHeight - 46 + "px"
+      console.log(fullScreenContainer.minHeight)
     }
     return (
       <div>
         <div className="text-center bg-dark static-top">
-          <button onClick={() => this.randomize()} className="btn btn-secondary m-1">RANDOMIZE COLORS</button>  
+          <button onClick={() => this.randomize()} className="btn btn-secondary m-1">RANDOMIZE COLORS</button>
         </div>
-        <div className="w-100 d-flex flex-wrap flex-md-nowrap" style={ boxContainerStyle }>
+        <div className="w-100 d-flex flex-wrap flex-md-nowrap" style={ fullScreenContainer }>
           {boxesWithLockFn.map(Box)}
         </div>
       </div>
