@@ -1,62 +1,83 @@
 // Write your app here! (HINT: First thing should be a call to ReactDOM.render()... )
 
-// const generateRandomColor = () => {
-//   let randomColor = []
-//   for (let index = 0; index < 5; index++) {
-//     randomColor[index] = ("#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16)})).toUpperCase()
-//   }
-//   console.log(randomColor)
-//   return randomColor
-// }
+function Box(props, index, _allBoxes) {
+  const boxColor = {
+    backgroundColor: props.color,
+  }
+  const boxStyles = {
+    padding: "0 7px", 
+    backgroundColor: "#343A40", 
+    color: "#FFFFFF", 
+    borderRadius: ".25rem"
+  }
+  let lockBtnIcon = "fas fa-lock-open"
+  let lockBtnTxtColor = {
+    color: '#FFFFFF'
+  }
+  if (props.isLocked) {
+    lockBtnIcon = "fas fa-lock"
+  }
+  return (
+    <div id={index} key={index} style={boxColor} className="w-100 d-flex flex-column align-items-center justify-content-center">
+      <h3 style={boxStyles}>{props.color}</h3>
+      <button onClick={props.toggleLock} style={lockBtnTxtColor} className="btn btn-dark"><i className={lockBtnIcon}></i></button>
+    </div>
+  )
+}
 
-class ColorBox extends React.Component {
-
+class App extends React.Component {
   state = {
-    color: "blue"
+    boxes: [
+      this._box(),
+      this._box(),
+      this._box(),
+      this._box(),
+      this._box()
+    ]
   }
-
-  generateRandomColor = () => {
-    let randomColor = ("#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16)})).toUpperCase()
-    console.log(randomColor)
-    this.setState({
-      color: randomColor
+  _randomColor() {
+    return ("#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16)})).toUpperCase()
+  }
+  _box() {
+    return {
+      color: this._randomColor(),
+      isLocked: false
+    }
+  }
+  toggleLock(index) {
+    if (index < (this.state.boxes).length) {
+      const newBoxes = [...this.state.boxes]
+      newBoxes[index].isLocked = !newBoxes[index].isLocked
+      this.setState({boxes: newBoxes})
+    }
+  }
+  randomize() {
+    const currentBoxes = [...this.state.boxes]
+    const newBoxes = currentBoxes.map((box) => {
+      if (!box.isLocked) {
+        box.color = this._randomColor();
+      }
+      return box;
     })
+    this.setState({ boxes: newBoxes })
   }
-
   render() {
+    // add the .toggleLock function to each box
+    const boxesWithLockFn = this.state.boxes.map((box, index) => {
+      box.toggleLock = () => this.toggleLock(index)
+      return box
+    })
     return (
-      <div style={{ backgroundColor: this.state.color }} className="w-100 d-flex flex-column align-items-center justify-content-center">
-        <h1>{this.state.color}</h1>
-        <button className="btn btn-dark">UNLOCK</button>
+      <div>
+        <div className="text-center bg-dark static-top">
+          <button onClick={() => this.randomize()} className="btn btn-secondary m-1">RANDOMIZE COLORS</button>  
+        </div>
+        <div className="w-100 d-flex flex-wrap flex-md-nowrap" style={{ height: "calc(100vh - 46px)" }}>
+          {boxesWithLockFn.map(Box)}
+        </div>
       </div>
     )
   }
-}
-
-const RandomButtonEl = () => {
-  let newColor = ColorBox.generateRandomColor
-  console.log(newColor)
-  return (
-      <div className="text-center bg-dark fixed-top">
-        <button className="btn btn-secondary m-1">RANDOMIZE COLORS</button>  
-      </div>
-  )
-}
-
-const App = function() {
-
-  return (
-    <div>
-      <RandomButtonEl/>
-      <div className="w-100 d-flex" style={{ height: "100vh" }}>
-        <ColorBox />
-        <ColorBox />
-        <ColorBox />
-        <ColorBox />
-        <ColorBox />
-      </div>
-    </div>
-  )
 }
 
 ReactDOM.render(<App/>, document.getElementById('root'))
